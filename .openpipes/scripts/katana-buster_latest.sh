@@ -11,7 +11,7 @@
 # ─────────────────────────────────────────────────────────────
 
 # === CONFIGURAÇÃO GLOBAL ===
-source $HOME/.templates/config.sh
+source $HOME/.openpipes/scripts/config.sh
 
 varredurasdir="$pwd"
 wordlist="/usr/share/wordlists/dirb/big-parsed.txt"

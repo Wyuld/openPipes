@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configs
-source $HOME/.templates/config.sh
+source $HOME/.openpipes/scripts/config.sh
 
 base_dir=$(pwd)
 recon_dir="$base_dir/../Recon"

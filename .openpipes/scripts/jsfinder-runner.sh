@@ -4,7 +4,7 @@ set -euo pipefail
 
 # Caminhos base
 
-source $HOME/.templates/config.sh
+source $HOME/.openpipes/scripts/config.sh
 venv="$HOME/.venv-jsfinder/bin/activate"
 varreduraDir="$PWD"
 

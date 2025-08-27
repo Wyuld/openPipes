@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Configs
-source $HOME/.templates/config.sh
+source $HOME/.openpipes/scripts/config.sh
 
 base_dir="$PWD"
-templates_dir="$HOME/nuclei-templates"  # Var declarada mas não utilizada
+templates_dir="$HOME/nuclei.openpipes/.templates"  # Var declarada mas não utilizada
 output_dir="nuclei-output"
 
 mkdir -p "$output_dir"
