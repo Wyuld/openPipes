@@ -16,4 +16,4 @@ sudo nmap -PR -vv -O -sC -sV -p $(sed -z 's/\n/,/g;s/,$/\n/' openports.txt) $1 -
 rm -rf openports.txt
 fi
 
-for host in $(ll | sed 's/ \{1,\}/ /g' | cut -d " " -f 10 | grep nmap);do httpx -p $(cat $host/nmap.nmap | grep tcp | cut -d "/" -f1 | tr ' ' -d | sed -z 's/\n/,/g;s/,$//g') -title -tech-detect -status-code -probe -ip -ss -o $host/httpx;done
+for host in $(ls -lah | sed 's/ \{1,\}/ /g' | cut -d " " -f 10 | grep nmap);do httpx -p $(cat $host/nmap.nmap | grep tcp | cut -d "/" -f1 | tr ' ' -d | sed -z 's/\n/,/g;s/,$//g') -title -tech-detect -status-code -probe -ip -ss -o $host/httpx;done
