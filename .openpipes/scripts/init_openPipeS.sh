@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configs
-source $HOME/.templates/config.sh
+source $HOME/.openpipes/scripts/config.sh
 
 # Função para log com timestamp
 log() {
@@ -10,7 +10,7 @@ log() {
 
 # Verifica se diretórios existem
 if [ ! -d "$tpdir" ]; then
-    log "Diretório de templates não encontrado: $tpdir"
+    log "Diretório de.openpipes/.templates não encontrado: $tpdir"
     exit 1
 fi
 
@@ -19,14 +19,14 @@ if [ ! -d "$obsdir" ]; then
     exit 1
 fi
 
-# Copia templates base para dentro do diretório do Obsidian
-log "Copiando templates principais para a Vault..."
+# Copia.openpipes/.templates base para dentro do diretório do Obsidian
+log "Copiando.openpipes/.templates principais para a Vault..."
 cp -n "$tpdir/Dashboard_Global.md" "$obsdir/Pentest/"
 cp -n "$tpdir/Tarefas.md" "$obsdir/Pentest/"
 
-# Criação da estrutura básica de Alvo (interativo)
-read -p "Digite o nome do novo alvo (ex: sistema.exemplo.com): " targetName
-read -p "Digite o IP do novo alvo (ex: 10.10.10.10): " ip
+# Criação da estrutura básica de Alvo
+targetName="sistema.exemplo.com"
+ip="10.10.10.10"
 
 # Verifica se alvo já existe
 if [ -d "$obsdir/Pentest/Alvos/$targetName" ]; then
@@ -41,7 +41,7 @@ mkdir -p "$obsdir/Pentest/Alvos/$targetName/Vulnerabilidades"
 # Cria uma vulnerabilidade stub
 cp -n "$tpdir/vuln.stub.md" "$obsdir/Pentest/Alvos/$targetName/Vulnerabilidades/Vuln.stub.md""
 
-# Substituição de variáveis nos templates
+# Substituição de variáveis nos.openpipes/.templates
 sed "s/{{targetName}}/$targetName/g;s/{{ip}}/$ip/g" "$tpdir/target.stub.md" > "$obsdir/Pentest/Alvos/$targetName/$targetName.md"
 sed "s/{{targetName}}/$targetName/g" "$tpdir/dashboard.stub.md" > "$obsdir/Pentest/Alvos/$targetName/Dashboard_${targetName}.md"
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configs
-source $HOME/.templates/config.sh
+source $HOME/.openpipes/scripts/config.sh
 
 for host in $(ls -d nmap-* 2>/dev/null); do
     # Verifica se há portas abertas

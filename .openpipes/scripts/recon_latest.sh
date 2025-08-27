@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # === Configuração Global ===
-source $HOME/.templates/config.sh
+source $HOME/.openpipes/scripts/config.sh
 
 if [[ $# -ne 1 ]]; then
 echo "|--------------------------------------------------|"

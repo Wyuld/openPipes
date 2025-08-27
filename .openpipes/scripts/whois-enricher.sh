@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configs
-source $HOME/.templates/config.sh
+source $HOME/.openpipes/scripts/config.sh
 
 for dir in $(ls -l | grep nmap- | rev | cut -d " " -f1 | rev); do
   targetName=${dir#nmap-}
