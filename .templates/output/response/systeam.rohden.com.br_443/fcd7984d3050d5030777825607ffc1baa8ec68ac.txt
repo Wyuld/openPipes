@@ -1,0 +1,19 @@
+HEAD / HTTP/1.1
+Host: systeam.rohden.com.br
+User-Agent: Mozilla/5.0 (Debian; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+Accept-Charset: utf-8
+
+HTTP/1.1 200 OK
+Connection: close
+Content-Length: 18081
+Accept-Ranges: bytes
+Content-Type: text/html
+Date: Tue, 08 Jul 2025 07:24:25 GMT
+Etag: "6855ad5c-46a1"
+Last-Modified: Fri, 20 Jun 2025 18:50:04 GMT
+Server: nginx/1.27.4
+
+
+
+
+https://systeam.rohden.com.br:443

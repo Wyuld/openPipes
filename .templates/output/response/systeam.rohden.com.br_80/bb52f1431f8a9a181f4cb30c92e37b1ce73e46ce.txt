@@ -1,0 +1,25 @@
+POST / HTTP/1.1
+Host: systeam.rohden.com.br
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:126.0) Gecko/20100101 Firefox/126.0
+Content-Length: 0
+Accept-Charset: utf-8
+Accept-Encoding: gzip
+
+HTTP/1.1 404 Not Found
+Connection: close
+Content-Length: 153
+Content-Type: text/html
+Date: Tue, 08 Jul 2025 07:24:25 GMT
+Server: nginx/1.27.4
+
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx/1.27.4</center>
+</body>
+</html>
+
+
+
+http://systeam.rohden.com.br:80

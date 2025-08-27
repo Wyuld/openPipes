@@ -1,0 +1,9 @@
+{
+  "tipo": "Broken Access Control",
+  "cwe": "CWE-284",
+  "wstg_id": "WSTG-ATHZ-01",
+  "wstg_url": "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Authorization_Testing/01-Testing_for_Path_Traversal",
+  "owasp_url": "https://owasp.org/Top10/A01_2021-Broken_Access_Control/",
+  "cheatsheet_url": "https://cheatsheetseries.owasp.org/cheatsheets/Access_Control_Cheat_Sheet.html",
+  "descricao": "O produto não restringe ou falha em restringir que agentes não autorizados acessem recursos ou funcionalidades fora de seu escopo pretendido."
+}

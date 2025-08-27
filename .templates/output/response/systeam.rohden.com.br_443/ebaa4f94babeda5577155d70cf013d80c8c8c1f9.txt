@@ -1,0 +1,25 @@
+POST / HTTP/1.1
+Host: systeam.rohden.com.br
+User-Agent: Mozilla/5.0 (SS; Linux i686; rv:122.0) Gecko/20100101 Firefox/122.0
+Content-Length: 0
+Accept-Charset: utf-8
+Accept-Encoding: gzip
+
+HTTP/1.1 405 Not Allowed
+Connection: close
+Content-Length: 157
+Content-Type: text/html
+Date: Tue, 08 Jul 2025 07:24:25 GMT
+Server: nginx/1.27.4
+
+<html>
+<head><title>405 Not Allowed</title></head>
+<body>
+<center><h1>405 Not Allowed</h1></center>
+<hr><center>nginx/1.27.4</center>
+</body>
+</html>
+
+
+
+https://systeam.rohden.com.br:443
