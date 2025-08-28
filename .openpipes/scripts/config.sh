@@ -2,7 +2,7 @@
 
 proj=""
 obsdir="$HOME/.obsidianFixedMount/"
-tpdir="$HOME/.openpipes/.templates"
+tpdir="$HOME/.openpipes/.templates/"
 base_dir="$proj/Varreduras"
 
 securitytrailskey=""
