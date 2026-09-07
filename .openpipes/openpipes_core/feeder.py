@@ -74,13 +74,18 @@ def _get_injected_targets(proj_path: str, tool_name: str) -> dict:
 
     for (host, url, method), params in endpoints.items():
         entry = result.setdefault(host, {"get": [], "post": [], "headers": []})
+        
+        # A VACINA DO ASTERISCO: Troca o '*' por '%2A' para não confundir o SQLMap!
+        safe_url = url.replace("*", "%2A")
+        
         if params["get"]:
-            entry["get"].append(f"{url}?{'&'.join(f'{p}=FUZZ' for p in params['get'])}")
+            entry["get"].append(f"{safe_url}?{'&'.join(f'{p}=FUZZ' for p in params['get'])}")
         if params["post"]:
-            entry["post"].append((url, "&".join(f"{p}=FUZZ" for p in params["post"])))
+            entry["post"].append((safe_url, "&".join(f"{p}=FUZZ" for p in params["post"])))
         if params["headers"]:
             for h in params["headers"]:
-                entry["headers"].append((url, h))
+                entry["headers"].append((safe_url, h))
+                
     return result
 
 
