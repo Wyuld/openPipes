@@ -1318,10 +1318,11 @@ def _mark_scanned_by_input_file(proj_path, nmap_dir, tool_name, input_filenames)
                                 
                                 # Lida com POST targets do Dalfox/SQLMap (ex: url|dados_post)
                                 url_part = line.split("|")[0]
-                                url = _normalize_url(url_part)
-                                if not url: continue
                                 
-                                # O Feroxbuster recebe diretórios, então marcamos o diretório e seus filhos
+                                # MÁGICA 1: Removemos a Query String (?FUZZ) para bater com as URLs originais!
+                                base_url = url_part.split("?")[0]
+                                if not base_url: continue
+                                
                                 if tool_name == "ferox":
                                     cursor.execute("""
                                         UPDATE endpoints SET scanned_by = CASE
@@ -1330,16 +1331,28 @@ def _mark_scanned_by_input_file(proj_path, nmap_dir, tool_name, input_filenames)
                                             ELSE scanned_by
                                         END
                                         WHERE url LIKE ?
-                                    """, (tool_name, f"%{tool_name}%", tool_name, f"{url}%"))
+                                    """, (tool_name, f"%{tool_name}%", tool_name, f"{base_url}%"))
                                 else:
+                                    # MÁGICA 2: Httpx/Nuclei - Se a URL (viva ou morta) não existir no DB, criamos um "dummy" pra registrar o scan
+                                    if tool_name in ["httpx", "nuclei"]:
+                                        cursor.execute("SELECT id FROM endpoints WHERE url LIKE ?", (f"{base_url}%",))
+                                        if not cursor.fetchone():
+                                            host_str = urlparse(base_url).hostname
+                                            cursor.execute("SELECT id FROM hosts WHERE host = ?", (host_str,))
+                                            h_row = cursor.fetchone()
+                                            if h_row:
+                                                cursor.execute("INSERT INTO endpoints (host_id, url, scanned_by) VALUES (?, ?, ?)", (h_row['id'], base_url, tool_name))
+                                                continue # Já inseriu com o scanned_by certo, vai pro próximo
+                                    
+                                    # Atualiza a URL base com um LIKE (Linka o SQLMap/Dalfox aos endpoints originais!)
                                     cursor.execute("""
                                         UPDATE endpoints SET scanned_by = CASE
                                             WHEN scanned_by IS NULL OR scanned_by = '' THEN ?
                                             WHEN scanned_by NOT LIKE ? THEN scanned_by || ',' || ?
                                             ELSE scanned_by
                                         END
-                                        WHERE url = ?
-                                    """, (tool_name, f"%{tool_name}%", tool_name, url))
+                                        WHERE url LIKE ?
+                                    """, (tool_name, f"%{tool_name}%", tool_name, f"{base_url}%"))
                     except Exception:
                         pass
 

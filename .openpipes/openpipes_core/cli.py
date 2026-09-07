@@ -79,7 +79,28 @@ def show_execution_history():
 
 
 def run_bash_module(module_name, extra_args=None, custom_target=None, custom_tool_args=None):
-    proj_name, proj_path, nmap_dir = get_project_env()
+    extra_args = extra_args or []
+
+    # =================================================================
+    # VACINA ANTI-BURACO NEGRO DO ARGPARSE: Resgata flags engolidas
+    # =================================================================
+    if extra_args:
+        import argparse
+        rescue_parser = argparse.ArgumentParser(add_help=False)
+        rescue_parser.add_argument("-t", "--target")
+        rescue_parser.add_argument("-a", "--args")
+        rescued, remaining = rescue_parser.parse_known_args(extra_args)
+        
+        if rescued.target:
+            custom_target = rescued.target
+        if rescued.args:
+            custom_tool_args = rescued.args
+        
+        extra_args = remaining  # Devolve só o que sobrar de verdade!
+    # =================================================================
+
+    proj_name, proj_path, nmap_dir = get_project_env()    
+
     if proj_name == "DESCONHECIDO" or not proj_path:
         console.print("\n[bold red]✖ Erro: Projeto não configurado.[/bold red]")
         input("Pressione ENTER para continuar...")

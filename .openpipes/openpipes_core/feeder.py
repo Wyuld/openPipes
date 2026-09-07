@@ -167,9 +167,14 @@ def feed_httpx(proj_path: str, nmap_dir: str):
             FROM hosts h
             JOIN ports p ON p.host_id = h.id
             WHERE h.is_alive = 1 AND h.in_scope = 1
-              AND p.state = 'open'
-              AND p.service IN ('http','https','http-proxy','ssl','unknown',
-                                'ssl/http','ssl/https','ssl/http-proxy','ssl/unknown','upnp')
+            AND p.state = 'open'
+            AND p.service IN ('http','https','http-proxy','ssl','unknown',
+            'ssl/http','ssl/https','ssl/http-proxy','ssl/unknown','upnp')
+            AND NOT EXISTS (
+                SELECT 1 FROM endpoints e 
+                WHERE e.host_id = h.id 
+                AND e.scanned_by LIKE '%httpx%'
+            )
             ORDER BY h.host
         """)
         hosts = cursor.fetchall()
@@ -473,7 +478,12 @@ def feed_nuclei(proj_path: str, nmap_dir: str):
             FROM hosts h JOIN ports p ON p.host_id = h.id
             WHERE h.is_alive = 1 AND h.in_scope = 1 AND p.state = 'open'
             AND (COALESCE(p.service, '') IN ('http','https','cloudflare','upnp','unknown','')
-                OR p.port IN (80, 443, 8080, 8443, 8000, 8888))
+            OR p.port IN (80, 443, 8080, 8443, 8000, 8888))
+            AND NOT EXISTS (
+                SELECT 1 FROM endpoints e 
+                WHERE e.host_id = h.id 
+                AND e.scanned_by LIKE '%nuclei%'
+            )
             ORDER BY h.host, p.port
         """)
         rows = cur.fetchall()
