@@ -104,7 +104,7 @@ for nmapFolder in "$varreduraDir"/nmap-*; do
         ROUND=$((ROUND+1))
     done
 
-# ==========================================
+    # ==========================================
     # FASE FINAL: PROCESSAMENTO E JSON (ANTI-ARG_MAX)
     # ==========================================
     sort -u "$tmpDir/source_map.txt" -o "$tmpDir/source_map.txt" 2>/dev/null

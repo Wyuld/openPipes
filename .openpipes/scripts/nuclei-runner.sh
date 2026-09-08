@@ -13,6 +13,14 @@ if [[ -n "${OP_TOOL_ARGS:-}" ]]; then
 fi
 # ========================================================
 
+# RAIO-X: Mostra o que diabos o Bash entendeu!
+if [ ${#extra_args[@]} -gt 0 ]; then
+    echo -e " [DEBUG] Argumentos recebidos do Python:"
+    for i in "${!extra_args[@]}"; do
+        echo "   [$i] -> ${extra_args[$i]}"
+    done
+fi
+
 for dir in "$NMAP_DIR"/nmap-*; do
     [[ ! -d "$dir" ]] && continue
     target_name="${dir##*/nmap-}"

@@ -37,6 +37,14 @@ process_target() {
     fi
     # ==========================
 
+    # RAIO-X: Mostra o que diabos o Bash entendeu!
+    if [ ${#extra_args[@]} -gt 0 ]; then
+        echo -e " [DEBUG] Argumentos recebidos do Python:"
+        for i in "${!extra_args[@]}"; do
+            echo "   [$i] -> ${extra_args[$i]}"
+        done
+    fi
+
     local WORK_DIR="$NMAP_DIR/nmap-$TARGET"
     local INPUT_FILE="$WORK_DIR/katana_urls.txt"
 

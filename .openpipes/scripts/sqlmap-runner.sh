@@ -4,13 +4,20 @@ echo -e "\n\e[34m[+]\e[0m Iniciando SQLMap (injetáveis)..."
 
 # ========================================================
 # MAGIA NINJA: CONVERTER ARGS CUSTOMIZADOS PARA ARRAY
-# (Colocamos fora do loop para não rodar o eval várias vezes!)
 # ========================================================
 extra_args=()
 if [[ -n "${OP_TOOL_ARGS:-}" ]]; then
     eval "extra_args=($OP_TOOL_ARGS)"
 fi
 # ========================================================
+
+# RAIO-X: Mostra o que diabos o Bash entendeu!
+if [ ${#extra_args[@]} -gt 0 ]; then
+    echo -e " [DEBUG] Argumentos recebidos do Python:"
+    for i in "${!extra_args[@]}"; do
+        echo "   [$i] -> ${extra_args[$i]}"
+    done
+fi
 
 for d in "$NMAP_DIR"/nmap-*/; do
     [ -d "$d" ] || continue

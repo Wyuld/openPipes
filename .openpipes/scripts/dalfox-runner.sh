@@ -10,6 +10,14 @@ if [[ -n "${OP_TOOL_ARGS:-}" ]]; then
 fi
 # ========================================================
 
+# RAIO-X: Mostra o que diabos o Bash entendeu!
+if [ ${#extra_args[@]} -gt 0 ]; then
+    echo -e " [DEBUG] Argumentos recebidos do Python:"
+    for i in "${!extra_args[@]}"; do
+        echo "   [$i] -> ${extra_args[$i]}"
+    done
+fi
+
 echo -e "\n\e[34m[+]\e[0m Iniciando varredura XSS com Dalfox (Remote Payloads + Deep DOM)..."
 
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)

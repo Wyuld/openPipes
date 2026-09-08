@@ -291,6 +291,20 @@ def init_db(proj_path):
             "project_id": "project_id INTEGER REFERENCES projects(id) ON DELETE SET NULL"
         })
 
+        # Tabela de OSINT (Mapeamento de Pessoas)
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS osint_people (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                host_id INTEGER,
+                name TEXT,
+                role TEXT,
+                email TEXT,
+                source TEXT,
+                FOREIGN KEY(host_id) REFERENCES hosts(id),
+                UNIQUE(email)
+            )
+        ''')
+
         # ═══════════════════════════════════════════════════════════════
         # INDEXES (idempotent)
         # ═══════════════════════════════════════════════════════════════
