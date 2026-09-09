@@ -1451,11 +1451,11 @@ def dispatch(module_name, proj_path, nmap_dir):
         _mark_scanned_by_input_file(proj_path, nmap_dir, "sqlmap", ["sqlmap_get.txt", "sqlmap_post.txt"])
         _mark_params_scanned(proj_path, "sqlmap")
 
+    elif module_name == "osint-people-runner":
+        parse_osint_people(proj_path)
+
     else:
         console.print(f" [yellow]⚠ Nenhum parser registrado para: {module_name}[/yellow]")
-
-    elif tool_name == "osint-people-runner":
-        parse_osint_people(proj_path)
 
     # Run false positive detection after every parse
     flag_false_positives(proj_path)

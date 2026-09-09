@@ -23,17 +23,18 @@ def run(domain: str, keys: list) -> list:
         console.print(f"[dim]  [Apollo] Tentando usar chave: {key[:4]}...{key[-4:]}[/dim]")
         
         while True:
+            # A CHAVE AGORA VAI AQUI NO HEADER!
             headers = {
                 "Cache-Control": "no-cache",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-Api-Key": key 
             }
+            # E SAIU DAQUI DO PAYLOAD:
             payload = {
-                "api_key": key,
                 "q_organization_domains": domain,
                 "page": page,
-                "per_page": 25  # Máximo permitido pela API free do Apollo
+                "per_page": 25
             }
-
             try:
                 response = requests.post(url, headers=headers, json=payload, timeout=15)
                 
