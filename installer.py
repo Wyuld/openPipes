@@ -334,6 +334,7 @@ if [ -f "{HOME}/.openpipes/config.sh" ]; then source "{HOME}/.openpipes/config.s
         "dalfox-runner.sh": "dalfox-runner",
         "arjun-runner.sh": "arjun-runner",
         "sqlmap-runner.sh": "sqlmap-runner",
+        "osint-people-runner.sh": "osint-people-runner",
     }
     for src, link in symlinks.items():
         src_path = f"{OPENPIPES_SCRIPTS}/{src}"
