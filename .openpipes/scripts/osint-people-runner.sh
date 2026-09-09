@@ -27,8 +27,8 @@ while read -r domain; do
 
     echo "  → Acionando motores de busca para: $domain..."
     
-    # Chama o Orquestrador em Python passando os argumentos vitais
-    python -m openpipes_core.osint.orchestrator "$domain" "$OUT_JSON"
+    # Chama o Orquestrador em Python passando o mapa (PYTHONPATH) e os argumentos vitais
+    PYTHONPATH="$HOME/.openpipes" python -m openpipes_core.osint.orchestrator "$domain" "$OUT_JSON"
     
 done < "$DOMAIN_FILE"
 
