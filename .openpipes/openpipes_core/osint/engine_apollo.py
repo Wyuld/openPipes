@@ -31,7 +31,7 @@ def run(domain: str, keys: list) -> list:
                 "api_key": key,
                 "q_organization_domains": domain,
                 "page": page,
-                "per_page": 100  # Máximo permitido pela API free do Apollo
+                "per_page": 25  # Máximo permitido pela API free do Apollo
             }
 
             try:
@@ -72,7 +72,7 @@ def run(domain: str, keys: list) -> list:
                     break # Sai do 'while' e passa para a próxima chave do 'for'
 
                 else:
-                    console.print(f"[red]  [Apollo] Erro API (HTTP {response.status_code}). Abortando.[/red]")
+                    console.print(f"[red]  [Apollo] Erro API (HTTP {response.status_code}). Detalhes: {response.text}[/red]")
                     return results
 
             except Exception as e:

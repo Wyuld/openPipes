@@ -1357,6 +1357,41 @@ def _mark_scanned_by_input_file(proj_path, nmap_dir, tool_name, input_filenames)
                         pass
 
 
+def parse_osint_people(proj_path):
+    """Lê os arquivos JSON gerados pelo módulo de OSINT e injeta no banco de dados."""
+    osint_dir = os.path.join(proj_path, "OSINT")
+    if not os.path.exists(osint_dir):
+        return
+
+    with db.get_connection(proj_path) as conn:
+        with db.transaction(conn):
+            cursor = conn.cursor()
+            
+            for filename in os.listdir(osint_dir):
+                if filename.startswith("osint_people_") and filename.endswith(".json"):
+                    filepath = os.path.join(osint_dir, filename)
+                    
+                    try:
+                        with open(filepath, "r", encoding="utf-8") as f:
+                            data = json.load(f)
+                            
+                        for person in data:
+                            name = f"{person.get('first_name', '')} {person.get('last_name', '')}".strip()
+                            role = person.get('title', 'Desconhecido')
+                            email = person.get('email', '')
+                            source = person.get('source', 'unknown')
+                            
+                            if not email:
+                                continue # Ignora se a API não retornou e-mail
+                                
+                            cursor.execute('''
+                                INSERT OR IGNORE INTO osint_people (name, role, email, source)
+                                VALUES (?, ?, ?, ?)
+                            ''', (name, role, email, source))
+                            
+                    except Exception as e:
+                        print(f"[!] Erro ao processar o arquivo OSINT {filename}: {e}")
+
 # ═════════════════════════════════════════════════════════════════════
 # DISPATCH
 # ═════════════════════════════════════════════════════════════════════
@@ -1418,6 +1453,9 @@ def dispatch(module_name, proj_path, nmap_dir):
 
     else:
         console.print(f" [yellow]⚠ Nenhum parser registrado para: {module_name}[/yellow]")
+
+    elif tool_name == "osint-people-runner":
+        parse_osint_people(proj_path)
 
     # Run false positive detection after every parse
     flag_false_positives(proj_path)
