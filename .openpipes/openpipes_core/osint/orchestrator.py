@@ -7,7 +7,7 @@ from rich.console import Console
 
 # Importa as nossas Engines isoladas
 from openpipes_core.osint import engine_apollo
-# from openpipes_core.osint import engine_hunter # (Preparado para o futuro!)
+from openpipes_core.osint import engine_hunter
 
 console = Console()
 
@@ -85,9 +85,11 @@ def main():
     else:
         console.print("[dim]  [Orchestrator] Nenhuma chave APOLLO encontrada no secrets.conf.[/dim]")
 
-    # 3. Aciona Motores Futuros...
-    # hunter_keys = secrets.get("hunter", [])
-    # se tiver hunter_keys: all_results.extend(engine_hunter.run(domain, hunter_keys))
+    # 3. Aciona Motore do Hunter
+    hunter_keys = secrets.get("hunter", [])
+    if hunter_keys:
+        hunter_data = engine_hunter.run(domain, hunter_keys)
+        all_results.extend(hunter_data)
     
     # 4. Consolida e limpa a sujeira
     final_results = deduplicate(all_results)
