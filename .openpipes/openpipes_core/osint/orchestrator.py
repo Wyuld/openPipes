@@ -2,10 +2,11 @@ import sys
 import os
 import json
 import re
-import requests # <--- ADICIONAR
+import requests
 from pathlib import Path
 from rich.console import Console
-from rich.table import Table # <--- ADICIONAR
+from rich.table import Table
+from tomba.services.usage import Usage
 
 # Importa as nossas Engines isoladas
 from openpipes_core.osint import engine_apollo
@@ -110,6 +111,41 @@ def check_api_status(secrets):
                 table.add_row("Hunter.io", masked, f"[red]Erro {res.status_code}[/red]")
         except Exception:
             table.add_row("Hunter.io", masked, "[red]Falha na conexão[/red]")
+
+    # ── Checagem do Tomba.io ──
+    tomba_keys = secrets.get("tomba", [])
+    if not tomba_keys:
+        table.add_row("Tomba.io", "Não configurada", "[dim]N/A[/dim]")
+    
+    for key_pair in tomba_keys:
+        try:
+            api_key, api_secret = key_pair.split(":", 1)
+            masked = f"{api_key[:4]}...{api_key[-4:]}"
+        except ValueError:
+            table.add_row("Tomba.io", "Formato Inválido", "[red]Erro de Formato[/red]")
+            continue
+            
+        try:
+            from tomba.client import Client
+            from tomba.services.usage import Usage
+            
+            client = Client()
+            client.set_key(api_key).set_secret(api_secret)
+            usage_service = Usage(client)
+            result = usage_service.get_usage()
+            
+            # Extrai os dados do JSON que a biblioteca do Tomba retorna
+            data = result.get("data", {})
+            requests_used = data.get("usage", {}).get("requests", 0)
+            requests_limit = data.get("limits", {}).get("requests", 0)
+            
+            color = "red" if requests_used >= requests_limit else "green"
+            table.add_row("Tomba.io", masked, f"[{color}]{requests_used}/{requests_limit} usados[/{color}]")
+            
+        except ImportError:
+            table.add_row("Tomba.io", masked, "[yellow]SDK 'tomba' ausente[/yellow]")
+        except Exception:
+            table.add_row("Tomba.io", masked, "[red]Falha na conexão[/red]")
 
     # ── Checagem do Apollo.io ──
     apollo_keys = secrets.get("apollo", [])
