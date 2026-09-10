@@ -126,24 +126,23 @@ def check_api_status(secrets):
             continue
             
         try:
-            from tomba.client import Client
-            from tomba.services.usage import Usage
+            headers = {
+                "X-Tomba-Key": api_key,
+                "X-Tomba-Secret": api_secret,
+                "User-Agent": "Tomba-Python/1.0.3"
+            }
+            res = requests.get("https://api.tomba.io/v1/usage", headers=headers, timeout=10)
             
-            client = Client()
-            client.set_key(api_key).set_secret(api_secret)
-            usage_service = Usage(client)
-            result = usage_service.get_usage()
-            
-            # Extrai os dados do JSON que a biblioteca do Tomba retorna
-            data = result.get("data", {})
-            requests_used = data.get("usage", {}).get("requests", 0)
-            requests_limit = data.get("limits", {}).get("requests", 0)
-            
-            color = "red" if requests_used >= requests_limit else "green"
-            table.add_row("Tomba.io", masked, f"[{color}]{requests_used}/{requests_limit} usados[/{color}]")
-            
-        except ImportError:
-            table.add_row("Tomba.io", masked, "[yellow]SDK 'tomba' ausente[/yellow]")
+            if res.status_code == 200:
+                data = res.json().get("data", {})
+                requests_used = data.get("usage", {}).get("requests", 0)
+                requests_limit = data.get("limits", {}).get("requests", 0)
+                
+                color = "red" if requests_used >= requests_limit else "green"
+                table.add_row("Tomba.io", masked, f"[{color}]{requests_used}/{requests_limit} usados[/{color}]")
+            else:
+                table.add_row("Tomba.io", masked, f"[red]Erro {res.status_code}[/red]")
+                
         except Exception:
             table.add_row("Tomba.io", masked, "[red]Falha na conexão[/red]")
 
