@@ -36,7 +36,7 @@ def run(target_domain: str, keys: list) -> list:
             
             params = {
                 "domain": target_domain,
-                "limit": 100,
+                "limit": 10,
                 "page": page
             }
 
