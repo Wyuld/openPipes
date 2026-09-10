@@ -2,14 +2,17 @@ import sys
 import os
 import json
 import re
+import requests # <--- ADICIONAR
 from pathlib import Path
 from rich.console import Console
+from rich.table import Table # <--- ADICIONAR
 
 # Importa as nossas Engines isoladas
 from openpipes_core.osint import engine_apollo
 from openpipes_core.osint import engine_hunter
 
 console = Console()
+
 
 def load_secrets():
     """
@@ -44,6 +47,7 @@ def load_secrets():
     
     return secrets
 
+
 def deduplicate(results):
     """
     A faxina fina! Remove contatos duplicados cruzando as bases.
@@ -69,7 +73,57 @@ def deduplicate(results):
             
     return list(seen.values())
 
+
+def check_api_status(secrets):
+    """Monta um painel mostrando as chaves mascaradas e o saldo de créditos"""
+    table = Table(title="Painel de APIs OSINT")
+    table.add_column("Serviço", style="cyan", justify="left")
+    table.add_column("Chave (Mascarada)", style="dim", justify="center")
+    table.add_column("Status / Créditos", style="green", justify="right")
+
+    # ── Checagem do Hunter.io ──
+    hunter_keys = secrets.get("hunter", [])
+    if not hunter_keys:
+        table.add_row("Hunter.io", "Não configurada", "[dim]N/A[/dim]")
+    
+    for key in hunter_keys:
+        masked = f"{key[:4]}...{key[-4:]}"
+        try:
+            # O Hunter tem um endpoint específico para checar a conta!
+            res = requests.get(f"https://api.hunter.io/v2/account?api_key={key}", timeout=10)
+            if res.status_code == 200:
+                calls = res.json().get("data", {}).get("calls", {})
+                used = calls.get("used", 0)
+                avail = calls.get("available", 0)
+                # Alerta vermelho se estiver perto de acabar
+                color = "red" if used >= avail else "green"
+                table.add_row("Hunter.io", masked, f"[{color}]{used}/{avail} usados[/{color}]")
+            else:
+                table.add_row("Hunter.io", masked, f"[red]Erro {res.status_code}[/red]")
+        except Exception:
+            table.add_row("Hunter.io", masked, "[red]Falha na conexão[/red]")
+
+    # ── Checagem do Apollo.io ──
+    apollo_keys = secrets.get("apollo", [])
+    if not apollo_keys:
+        table.add_row("Apollo.io", "Não configurada", "[dim]N/A[/dim]")
+        
+    for key in apollo_keys:
+        masked = f"{key[:4]}...{key[-4:]}"
+        # A API free do Apollo não tem endpoint simples de créditos, então apenas validamos que existe.
+        table.add_row("Apollo.io", masked, "[blue]Pronta para uso[/blue]")
+
+    console.print(table)
+
+
 def main():
+    secrets = load_secrets()
+
+    # Intercepta a flag de status
+    if len(sys.argv) == 2 and sys.argv[1] == "--status":
+        check_api_status(secrets)
+        sys.exit(0)
+
     if len(sys.argv) < 3:
         console.print("[bold red]Uso: python -m openpipes_core.osint.orchestrator <domain> <out_json>[/bold red]")
         sys.exit(1)
@@ -105,6 +159,7 @@ def main():
     # 5. Entrega a bandeja de prata para o parser
     with open(out_json, "w", encoding="utf-8") as f:
         json.dump(final_results, f, indent=4, ensure_ascii=False)
+
 
 if __name__ == "__main__":
     main()
