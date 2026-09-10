@@ -1,3 +1,9 @@
+---
+tipo: dashboard
+projeto: {{ project_name }}
+gerado_em: {{ generated_at }}
+---
+
 # 🕵️‍♂️ Mapeamento Humano (OSINT)
 
 > **Resumo:** Foram encontrados **{{ osint_people|length }}** colaboradores expostos na web para este alvo.
@@ -5,9 +11,9 @@
 {% if osint_people %}
 | Nome | Cargo | E-mail | Fonte |
 | :--- | :--- | :--- | :--- |
-{% for person in osint_people %}
-| **{{ person.name }}** | {{ person.role }} | `{{ person.email }}` | *{{ person.source }}* |
-{% endfor %}
+{%- for person in osint_people %}
+| **{{ person.name }}** | {{ person.role }} | {{ person.email }} | *{{ person.source }}* |
+{%- endfor %}
 {% else %}
 *Nenhum colaborador foi mapeado ou as APIs não retornaram resultados.*
 {% endif %}

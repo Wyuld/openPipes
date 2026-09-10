@@ -10,6 +10,7 @@ from rich.table import Table # <--- ADICIONAR
 # Importa as nossas Engines isoladas
 from openpipes_core.osint import engine_apollo
 from openpipes_core.osint import engine_hunter
+from openpipes_core.osint import engine_tomba
 
 console = Console()
 
@@ -23,6 +24,7 @@ def load_secrets():
     secrets = {
         "apollo": [],
         "hunter": [],
+        "tomba": [],
     }
     
     if not os.path.exists(secrets_path):
@@ -44,6 +46,12 @@ def load_secrets():
     if hunter_match:
         raw_keys = hunter_match.group(1).split()
         secrets["hunter"] = [k.strip("'\"") for k in raw_keys if k.strip("'\"")]
+    
+    # Regex do Tomba
+    tomba_match = re.search(r'TOMBA_KEYS=\((.*?)\)', content, re.DOTALL)
+    if tomba_match:
+        raw_keys = tomba_match.group(1).split()
+        secrets["tomba"] = [k.strip("'\"") for k in raw_keys if k.strip("'\"")]
     
     return secrets
 
@@ -151,12 +159,20 @@ def main():
     else:
         console.print("[dim]  [Orchestrator] Nenhuma chave HUNTER encontrada no secrets.conf.[/dim]")
     
-    # 4. Consolida e limpa a sujeira
+    # 4. Aciona Tomba
+    tomba_keys = secrets.get("tomba", [])
+    if tomba_keys:
+        tomba_data = engine_tomba.run(domain, tomba_keys)
+        all_results.extend(tomba_data)
+    else:
+        console.print("[dim]  [Orchestrator] Nenhuma chave TOMBA encontrada no secrets.conf.[/dim]")
+    
+    # 5. Consolida e limpa a sujeira
     final_results = deduplicate(all_results)
     
     console.print(f"[bold green]  [Orchestrator] OSINT Consolidado: {len(final_results)} contatos únicos mapeados.[/bold green]")
     
-    # 5. Entrega a bandeja de prata para o parser
+    # 6. Entrega a bandeja de prata para o parser
     with open(out_json, "w", encoding="utf-8") as f:
         json.dump(final_results, f, indent=4, ensure_ascii=False)
 
