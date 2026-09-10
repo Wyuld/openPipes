@@ -19,7 +19,7 @@ def load_secrets():
     secrets_path = os.path.join(str(Path.home()), ".openpipes", "secrets.conf")
     secrets = {
         "apollo": [],
-        "hunter": []
+        "hunter": [],
     }
     
     if not os.path.exists(secrets_path):
@@ -37,6 +37,10 @@ def load_secrets():
         secrets["apollo"] = [k.strip("'\"") for k in raw_keys if k.strip("'\"")]
 
     # Regex do Hunter ficaria aqui no futuro!
+    hunter_match = re.search(r'HUNTER_KEYS=\((.*?)\)', content, re.DOTALL)
+    if hunter_match:
+        raw_keys = hunter_match.group(1).split()
+        secrets["hunter"] = [k.strip("'\"") for k in raw_keys if k.strip("'\"")]
     
     return secrets
 
@@ -85,7 +89,7 @@ def main():
     else:
         console.print("[dim]  [Orchestrator] Nenhuma chave APOLLO encontrada no secrets.conf.[/dim]")
 
-    # 3. Aciona Motore do Hunter
+    # 3. Aciona Motor do Hunter
     hunter_keys = secrets.get("hunter", [])
     if hunter_keys:
         hunter_data = engine_hunter.run(domain, hunter_keys)

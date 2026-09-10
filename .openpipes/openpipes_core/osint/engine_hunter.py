@@ -23,7 +23,7 @@ def run(domain: str, keys: list) -> list:
         params = {
             "domain": domain,
             "api_key": key,
-            "limit": 100  # O Hunter permite puxar até 100 resultados de uma vez
+            "limit": 10  # O Hunter permite puxar até 100 resultados de uma vez
         }
 
         try:
