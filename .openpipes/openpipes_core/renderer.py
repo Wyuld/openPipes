@@ -728,6 +728,17 @@ def render_all(proj_path: str, obsdir: str, proj_name: str, target_name: str = N
     console.print(f"\n[bold green]✔ Sync concluído![/bold green]")
 
 
+def _get_osint_people(proj_path: str) -> list[dict]:
+    """Extrai os dados de mapeamento humano (OSINT) do banco de dados."""
+    with db.get_connection(proj_path) as conn:
+        cursor = conn.cursor()
+        try:
+            cursor.execute("SELECT name, role, email, source FROM osint_people ORDER BY name ASC")
+            return [dict(r) for r in cursor.fetchall()]
+        except Exception:
+            return []
+
+
 def render_dashboard(proj_path: str, obsdir: str, proj_name: str):
     summary = get_project_summary(proj_path)
     targets = get_targets_list(proj_path)
@@ -771,6 +782,21 @@ def render_dashboard(proj_path: str, obsdir: str, proj_name: str):
     with open(os.path.join(pentest_dir, "Hosts_Panel.base"), "w", encoding="utf-8") as f:
         f.write(hosts_md)
 
+    # ========================================================
+    # GERAÇÃO DA NOTA DE OSINT (Mapeamento Humano)
+    # ========================================================
+    osint_people = _get_osint_people(proj_path)
+    if osint_people:
+        osint_md = env.get_template("osint.md.j2").render(
+            project_name=proj_name,
+            osint_people=osint_people,
+            generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        )
+        with open(os.path.join(pentest_dir, "OSINT_Mapeamento_Humano.md"), "w", encoding="utf-8") as f:
+            f.write(osint_md)
+        console.print(f" [dim]↳ Render: OSINT ({len(osint_people)} colaboradores mapeados)[/dim]")
+
+    # Print final atualizado
     console.print(f" [dim]↳ Render: Dashboard Global ({len(important)} importantes, {len(all_endpoints)} endpoints, {len(all_vulns)} vulns)[/dim]")
 
 
