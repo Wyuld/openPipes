@@ -90,6 +90,8 @@ def main():
     if hunter_keys:
         hunter_data = engine_hunter.run(domain, hunter_keys)
         all_results.extend(hunter_data)
+    else:
+        console.print("[dim]  [Orchestrator] Nenhuma chave HUNTER encontrada no secrets.conf.[/dim]")
     
     # 4. Consolida e limpa a sujeira
     final_results = deduplicate(all_results)
